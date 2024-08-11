@@ -43,7 +43,6 @@
 #define PC4 (1 << 4)
 #define PC5 (1 << 5)
 #define PC6 (1 << 6)
-#define PC7 (1 << 7)
 
 #define DDC0 (1 << 0)
 #define DDC1 (1 << 1)
@@ -52,7 +51,6 @@
 #define DDC4 (1 << 4)
 #define DDC5 (1 << 5)
 #define DDC6 (1 << 6)
-#define DDC7 (1 << 7)
 
 #define PD0 (1 << 0)
 #define PD1 (1 << 1)
@@ -72,6 +70,9 @@
 #define DDD6 (1 << 6)
 #define DDD7 (1 << 7)
 
-void toggle_pin(unsigned char* addr, unsigned char pin);
+void toggle_pin(unsigned char*, unsigned char);
+void set_pin(unsigned char*, unsigned char);
+void unset_pin(unsigned char*, unsigned char);
+void write_to_port(unsigned char*, unsigned char);
 
 #endif // !ATMEGA328P_H
