@@ -2,32 +2,38 @@ CC=avr-gcc
 OBJ = avr-objcopy
 DUMP = avr-objdump
 SIZE = avr-size
-MCU = -mmcu=atmega328
+MCU = atmega328
+FLASHER = avrdude
+PROGRAMMER = usbasp
+KERNEL = kernel7.hex
 SDIR=./src
 DEPS = $(SDIR)/ATMEGA328P.c  $(SDIR)/LCD.c
 
-all : kernel7.hex
+flash : all
+	$(FLASHER) -v -B4 -F -p $(MCU) -c $(PROGRAMMER) -U flash:w:$(KERNEL)
 
-kernel7.hex : a.out
-	$(OBJ) -O ihex a.out kernel7.hex
+all : $(KERNEL)
+
+$(KERNEL) : a.out
+	$(OBJ) -O ihex a.out $(KERNEL)
 
 a.out : $(SDIR)/main.c $(DEPS)
-	$(CC) $(MCU) -Os $(SDIR)/main.c $(DEPS)
+	$(CC) -mmcu=$(MCU) -Os $(SDIR)/main.c $(DEPS)
 
 %.o : %.c $(DEPS)
-	$(CC) -mmcu=atmega328 -c -Os $@ @$< $(CFLAGS)
+	$(CC) -mmcu=$(MCU) -c -Os $@ @$< $(CFLAGS)
 
-# clean :
-# 	rm $(SDIR)($(*.out) $(*.hex) $(*.o) $(*.gch)) main.txt
+clean :
+	rm $($(SDIR)/*.gch) $(KERNEL) a.out main.txt
 
 size :
-	$(SIZE) -C $(MCU)p main.out
+	$(SIZE) -C --mcu=$(MCU)p a.out
 
 dump :
-	$(DUMP) -d main.out > main.txt
+	$(DUMP) -d a.out > main.txt
 
 dump-all :
-	$(DUMP) -j .data .text -D > main.txt
+	$(DUMP) -j .data -j .text -D a.out > main.txt
 
 
 
