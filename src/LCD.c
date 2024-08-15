@@ -1,17 +1,15 @@
+#define F_CPU 1000000UL
+#include <util/delay.h>
 #include "LCD.h"
 #include "ATMEGA328P.h"
 
 #define DATA PORTB
 #define REG_OP PORTD
 
-#define D0 (1<<0)
-#define D1 (1<<1)
-#define D2 (1<<2)
-#define D3 (1<<3)
-#define D4 (1<<4)
-#define D5 (1<<5)
-#define D6 (1<<6)
-#define D7 (1<<7)
+#define D0 (1<<4)
+#define D1 (1<<5)
+#define D2 (1<<6)
+#define D3 (1<<7)
 
 #define REG_SEL     (1<<5)
 #define RW          (1<<6)
@@ -21,50 +19,72 @@
 #define RET_HOME    (0x02)
 #define DISP_ONOFF  (0x0C)
 
-void write_data(unsigned char);
-void send_instruction(unsigned char);
-void send_data(unsigned char);
+void write_4bit_data(unsigned char);
+void send_4bit_instruction(unsigned char);
+void send_4bit_data(unsigned char);
 
 void LCD_init()
 {
-    send_instruction(CLEAR_DISP);
-    send_instruction(RET_HOME);
-    send_instruction(DISP_ONOFF);
+    send_4bit_instruction(CLEAR_DISP);
+    send_4bit_instruction(RET_HOME);
+    send_4bit_instruction(DISP_ONOFF);
 }
 
 void LCD_print(const unsigned char *msg)
 {
     while(*msg != '\0')
     {
-        send_data(*msg);
+        send_4bit_data(*msg);
         msg++;
     }
 }
 
-void write_data(unsigned char val)
+void write_4bit_data(unsigned char val)
 {
     write_to_port(DATA, val);
+    set_pin(DATA, val & 0xF0);
 }
 
-void send_instruction(unsigned char inst)
+void send_4bit_instruction(unsigned char inst)
 {
     unset_pin(REG_OP, REG_SEL | RW);
-    // wait ?
+    _delay_ms(1);
     set_pin(REG_OP, ENABL);
+    _delay_ms(1);
+    set_pin(DATA, inst & 0xF0);
     // wait ?
-    write_data(inst);
+    _delay_ms(1);
+    unset_pin(REG_OP, ENABL);
+
+    _delay_ms(1);
+    set_pin(REG_OP, ENABL);
+    _delay_ms(1);
+    set_pin(DATA, (inst & 0x0F) << 4);
     // wait ?
+    _delay_ms(1);
     unset_pin(REG_OP, ENABL);
 }
 
-void send_data(unsigned char val)
+void send_4bit_data(unsigned char val)
 {
     set_pin(REG_OP, REG_SEL);
     unset_pin(REG_OP, RW);
     // wait ?
+    _delay_ms(1);
     set_pin(REG_OP, ENABL);
     // wait ?
-    write_data(val);
+    _delay_ms(1);
+    set_pin(DATA, val & 0xF0);
     // wait ?
+    _delay_ms(1);
+    unset_pin(REG_OP, ENABL);
+
+    _delay_ms(1);
+    set_pin(REG_OP, ENABL);
+    // wait ?
+    _delay_ms(1);
+    set_pin(DATA, (val & 0x0F) << 4 );
+    // wait ?
+    _delay_ms(1);
     unset_pin(REG_OP, ENABL);
 }
