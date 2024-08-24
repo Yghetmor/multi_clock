@@ -7,6 +7,7 @@ int main()
 {
     set_pin(DDRB, 0xFF);
     set_pin(DDRD, PD5 | PD6 | PD7);
+    set_pin(DDRC, PC5);
     LCD_init();
 
     const char *msg = "Bebilii";
