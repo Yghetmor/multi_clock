@@ -12,6 +12,11 @@
 #define DDRD ((unsigned char*)0x2A)
 #define PIND ((unsigned char*)0x29)
 
+#define TCCR0A ((unsigned char*)0x44)
+#define TCCR0B ((unsigned char*)0x45)
+
+#define TCNT0 ((unsigned char*)0x46)
+
 #define IVCE (1 << 0)
 #define IVSEL (1 << 1)
 #define PUD (1 << 4)
@@ -74,5 +79,6 @@ void toggle_pin(unsigned char*, unsigned char);
 void set_pin(unsigned char*, unsigned char);
 void unset_pin(unsigned char*, unsigned char);
 void write_to_port(unsigned char*, unsigned char);
+char get_pin(unsigned char*, unsigned char);
 
 #endif // !ATMEGA328P_H

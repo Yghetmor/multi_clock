@@ -7,7 +7,7 @@ FLASHER = avrdude
 PROGRAMMER = usbasp
 KERNEL = kernel7.hex
 SDIR=./src
-DEPS = $(SDIR)/ATMEGA328P.c  $(SDIR)/LCD.c
+DEPS = $(SDIR)/ATMEGA328P.c  $(SDIR)/LCD.c $(SDIR)/dht.c
 
 flash : all
 	$(FLASHER) -v -B4 -F -p $(MCU) -c $(PROGRAMMER) -U flash:w:$(KERNEL)

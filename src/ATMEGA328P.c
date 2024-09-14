@@ -19,3 +19,8 @@ void unset_pin(unsigned char * port, unsigned char pin)
 {
     *port &= (~pin);
 }
+
+char get_pin(unsigned char *port, unsigned char pin)
+{
+    return *port & pin;
+}
